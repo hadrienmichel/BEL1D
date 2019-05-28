@@ -294,7 +294,7 @@ else % Enabling file
                 handles.Data.used.Rx(1,1:length([handles.Data.proclog1.rxinfo(:).loopsize])) = [handles.Data.proclog1.rxinfo(:).loopsize];
             case 2
                 handles.Data.proclog2 = proclog.proclog;% Assigning the data to the Data structure
-                handles.Data.used.Tx(2) = handles.Data.proclog2.txinfo.loopsize;% Reading the transmitter diameter
+                handles.Data.used.Tx(2) = handles.Data.proclog2.txinfo.loopsize(end);% Reading the transmitter diameter
                 % Adding in the configuration menu
                 tx_supp = ['Tx = ' num2str(handles.Data.used.Tx(2)) 'm'];
                 while length(tx_supp) < 11,
@@ -307,7 +307,7 @@ else % Enabling file
                 handles.Data.used.Rx(2,1:length([handles.Data.proclog2.rxinfo(:).loopsize])) = [handles.Data.proclog2.rxinfo(:).loopsize];
             case 3
                 handles.Data.proclog3 = proclog.proclog;% Assigning the data to the Data structure
-                handles.Data.used.Tx(3) = handles.Data.proclog3.txinfo.loopsize;% Reading the transmitter diameter
+                handles.Data.used.Tx(3) = handles.Data.proclog3.txinfo.loopsize(end);% Reading the transmitter diameter
                 % Adding in the configuration menu
                 tx_supp = ['Tx = ' num2str(handles.Data.used.Tx(3)) 'm'];
                 while length(tx_supp) < 11,
@@ -320,7 +320,7 @@ else % Enabling file
                 handles.Data.used.Rx(3,1:length([handles.Data.proclog3.rxinfo(:).loopsize])) = [handles.Data.proclog3.rxinfo(:).loopsize];
             case 4
                 handles.Data.proclog4 = proclog.proclog;% Assigning the data to the Data structure
-                handles.Data.used.Tx(4) = handles.Data.proclog4.txinfo.loopsize;% Reading the transmitter diameter
+                handles.Data.used.Tx(4) = handles.Data.proclog4.txinfo.loopsize(end);% Reading the transmitter diameter
                 % Adding in the configuration menu
                 tx_supp = ['Tx = ' num2str(handles.Data.used.Tx(4)) 'm'];
                 while length(tx_supp) < 11,
@@ -963,7 +963,7 @@ if handles.Status.PFA ~= true,% Only possible to run if not previously run
             if jkl <= ceil(size(B,1)/2),
                 subplots(jkl,:) = 2*(jkl-1)+1:2*(jkl-1)+2;
             else
-                subplots(jkl,:) = 2*(jkl-1)+2:2*(jkl-1)+3;
+                subplots(jkl,:) = 2*(jkl-1)+1:2*(jkl-1)+2;
             end
         end
         for jkl = 1 : size(B,1),
@@ -997,15 +997,22 @@ if handles.Status.PFA ~= true,% Only possible to run if not previously run
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %-------------------------- End: graph display ---------------------------%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
+        %% Verification of noise impact on a sample of prior models
+        % Default bandwidth for the kernel density estimator:
+        default_bandwidth = 0.01;
+        answer = questdlg('Would you like to test the impact of noise?','Noise impact','Yes','No','No');
+        if strcmp(answer,'Yes'),
+            [~, error] = testNoise(Prior_d, PCA_d, A, default_bandwidth);
+        else
+            error = ones(dimh,1).*default_bandwidth;
+        end
         %% 4) Kernel density 
 
         disc = 10000;% Number of points in the pdf
         values = -10 : 20/(disc-1) : 10;
         for i = 1 : size(Dc,2)
             waitbar2a(i/(size(Dc,2)*2),handles.uipanel_waitbar,sprintf('Constructing posterior \n in reduced space . . .'));
-            [fi(:,i),out] = KernelDensity([Dc(:,i) Hc(:,i)],dobs_c(i),values,[0.01 0.01]); 
+            [fi(:,i),out] = KernelDensity([Dc(:,i) Hc(:,i)],dobs_c(i),values,[error(i) 0.01]); 
             if out,
                 if iterate,
                     break

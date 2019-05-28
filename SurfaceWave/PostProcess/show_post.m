@@ -56,16 +56,16 @@ set(findall(gcf,'-property','FontSize'),'FontSize',16);
 R = corrcoef([models.Vp models.Vs models.rho models.thick])
 R_prior =  corrcoef([models_prior.Vp models_prior.Vs models_prior.rho models_prior.thick])
 
-% %%
-% figure;
-% histogram(sum(models_prior.thick,2),'Normalization','pdf');
-% hold on
-% histogram(sum(models.thick,2),'Normalization','pdf');
-% ylimits = ylim;
-% plot([118 118],ylimits,'k','LineWidth',4);
-% legend('Prior','Posterior','Borehole');
-% xlabel('Depth to the bedrock [m]');
-% ylabel('Probability estimation [/]');
+%%
+figure;
+histogram(sum(models_prior.thick,2),'Normalization','pdf');
+hold on
+histogram(sum(models.thick,2),'Normalization','pdf');
+ylimits = ylim;
+plot([118 118],ylimits,'k','LineWidth',4);
+legend('Prior','Posterior','Borehole');
+xlabel('Depth to the bedrock [m]');
+ylabel('Probability estimation [/]');
 
 %%
 param = [models.Vp models.Vs models.rho models.thick];

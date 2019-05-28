@@ -66,8 +66,10 @@ end
 
 %% Adding the graph of distributions:
 
-load('ResultsTx50Rx50_2L_NF_1000m.mrsSNMR','-mat');
+  %load('ResultsTx50Rx50_2L_NF_1000m.mrsSNMR','-mat');
 
+[file, path] = uigetfile('*.mrsbel','Select the dataset for which you want to display the models');
+load([path file],'-mat');
 data_true = SNMR.Data.d_real_obs;
 data_post = SNMR.Solution.model.results;
 models = SNMR.Solution.model;

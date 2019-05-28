@@ -112,7 +112,7 @@ hold on;
 % Adding prior data:
 pas = 1;
 for i = 1 : pas : length(c_prior),
-    if max(c_prior(i,:))<1500 && min(c_prior(i,:))>0,
+    if max(c_prior(i,:))<2500 && min(c_prior(i,:))>0,
         plot(f_true,c_prior(i,:),'color',[0.5 0.5 0.5],'linewidth',0.2);
     end
 end
@@ -124,6 +124,9 @@ for i = 1 : length(c_post),
 %     end
 end
 
+
+
 plot(f_true,c_true,'w','linewidth',2);
 xlabel('Frequency [Hz]');
 ylabel('Phase Velocity [m/s]');
+set(gca, 'XScale', 'log');
