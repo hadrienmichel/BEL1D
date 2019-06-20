@@ -24,9 +24,4 @@ To install the packages, just copy the main directory at the location that pleas
 
 To launch the GUIs, simply type ```BEL1D``` in the MATLAB command window. You will load a welcome GUI where you can choose the specific GUI that you are interested in.
 
-Each GUI disposes of a specific embedded help that you can access by typing:
-```
->> help BEL1DSNMR %help for SNMR
->> help BEL1DSW %help for Surface Waves
->> help BEL1DGENERAL %help for the general case
-```
+For more details on the use of the toolboxes, refer to the user manual (Manual.pdf).
