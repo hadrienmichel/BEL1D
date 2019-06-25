@@ -25,3 +25,7 @@ To install the packages, just copy the main directory at the location that pleas
 To launch the GUIs, simply type ```BEL1D``` in the MATLAB command window. You will load a welcome GUI where you can choose the specific GUI that you are interested in.
 
 For more details on the use of the toolboxes, refer to the user manual (Manual.pdf).
+
+## Compatibility
+
+The toolboxes have been coded under Matlab R2018a (9.4). If you encounter issues running the codes, it may be due to incompatibility of the Matlab version (functions not released yet, etc.).
