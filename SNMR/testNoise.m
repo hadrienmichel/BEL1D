@@ -13,6 +13,8 @@ nbTest = 50;
 Cov_df = zeros(nbTest,dimD,dimD);
 index = ceil(rand(1,nbTest).*size(Prior_d,1));
 warning('off','all');
+h = waitbar(0,'Please wait . . .');
+tic;
 for i = 1 : nbTest,
     data_real = Prior_d(index(i),:)+randn(1,size(Prior_d,2))*noise_level;
     data_synthe = Prior_d;
@@ -21,6 +23,10 @@ for i = 1 : nbTest,
     score_D_tmp = (data_real - mean(data_synthe,1))*coeff;
     score_D_tmp = score_D_tmp(1:dimD);
     Cov_df(i,:,:) = cov([PCA_d_base(index(i),:);score_D_tmp]);
+    time = toc;
+    time = time/i;% Time per pass
+    remain = time*(nbTest-i);
+    waitbar(i/nbTest,h,['Remaining time: ' num2str(remain) ' sec']);
 end
 warning('on','all');
 

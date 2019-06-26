@@ -681,8 +681,12 @@ if handles.Status.PFA ~= true,% Only possible to run if not previously run
     % uncertainty on the models parameters. However, using already reduced
     % distributions may lead to errors in the posterior distributions,
     % especially if error is present in the data.
-    iterate = false;
-    iteration = 1;
+    iterate = true;% true = iterate, false = no iteration
+    if itarate,
+        iteration = 3; % Number of iterations
+    else, 
+        iteration = 1; 
+    end
     iteration_init = iteration;
     passed = 0;
     % End iteration parameters
@@ -1028,7 +1032,7 @@ if handles.Status.PFA ~= true,% Only possible to run if not previously run
 
             %% 5) Sampling and back-transformation
 
-            nb_sample = 1000;
+            nb_sample = handles.Models.N;
             nb_layer = handles.Models.nbLayers;
             CCAi = zeros(nb_sample,size(fi,2));
             HpostCoeff = zeros(nb_sample, size(fi,2));
