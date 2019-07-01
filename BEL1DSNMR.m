@@ -682,7 +682,7 @@ if handles.Status.PFA ~= true,% Only possible to run if not previously run
     % distributions may lead to errors in the posterior distributions,
     % especially if error is present in the data.
     iterate = true;% true = iterate, false = no iteration
-    if itarate,
+    if iterate,
         iteration = 3; % Number of iterations
     else, 
         iteration = 1; 
