@@ -468,7 +468,7 @@ if handles.Status.PFA ~= true,
 
     %% 1) Forward modelling:
     
-    waitbar2a(0,handles.uipanel_waitbar,'waitbartext',sprintf('Please wait . . . \n Computing FID'));
+    waitbar2a(0,handles.uipanel_waitbar,'waitbartext',sprintf('Please wait . . . \n Computing Dispersion Curves'));
 
 %     waitbar2a(0,handles.uipanel_waitbar,sprintf('Please wait . . . \n Computing forward models'));
 % 
