@@ -498,7 +498,7 @@ if handles.Status.PFA ~= true,
 %     end
 %     handles.Models.model.results = c_t;
 
-    [handles.Models,out_error] = gpdcCall(handles.Models,handles.Data.Curve.f);
+    [handles.Models,out_error] = gpdcCall_bisMEX(handles.Models,handles.Data.Curve.f);
     handles.Models.N = handles.Models.N - sum(out_error);
     handles.Models.model.thick = handles.Models.model.thick(~out_error,:);
     handles.Models.model.Vp = handles.Models.model.Vp(~out_error,:);
@@ -879,7 +879,7 @@ addpath([pwd '/SurfaceWave']);
 % clear thick Vp Vs rho nbLayers lambda;
 % handles.Solution.model.results = c_t;
 
-[handles.Solution,out_error] = gpdcCall(handles.Solution,handles.Data.Curve.f);
+[handles.Solution,out_error] = gpdcCall_bisMEX(handles.Solution,handles.Data.Curve.f);
 handles.Solution.N = handles.Solution.N - sum(out_error);
 handles.Solution.model.thick = handles.Solution.model.thick(~out_error,:);
 handles.Solution.model.Vp = handles.Solution.model.Vp(~out_error,:);

@@ -1,8 +1,5 @@
 
-function [isNoisy, Std_CCA] = testNoise(Prior_d, PCA_d_base, A, default_bandwidth)
-
-answer = inputdlg('Insert the noise level (in nV):');
-noise_level = str2double(answer)*1e-9;% In V
+function [isNoisy, Std_CCA] = testNoise(Prior_d, PCA_d_base, A, default_bandwidth, noise_level)
 
 % Getting the number of PCA dim kept:
 dimD = size(PCA_d_base,2);
@@ -19,7 +16,7 @@ for i = 1 : nbTest,
     data_real = Prior_d(index(i),:)+randn(1,size(Prior_d,2))*noise_level;
     data_synthe = Prior_d;
     data_synthe(index(i),:) = [];
-    [coeff,~,~,~,~,~]=pca(data_synthe);
+    [coeff,~,~,~,~,~]=pca(data_synthe,'NumComponents',dimD);
     score_D_tmp = (data_real - mean(data_synthe,1))*coeff;
     score_D_tmp = score_D_tmp(1:dimD);
     Cov_df(i,:,:) = cov([PCA_d_base(index(i),:);score_D_tmp]);
@@ -65,5 +62,7 @@ else
     isNoisy = false;
     Std_CCA = std_default;
 end
+
+delete(h);
 
 end

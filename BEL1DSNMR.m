@@ -230,6 +230,7 @@ handles.Status.PFA = false;%PFA performed?
 %%%%%%%%%%%%%/!\ Comment to perform true random generation /!\%%%%%%%%%%%%%
 %                                                                         %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+rng('default');
 rng(0);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                         %
@@ -550,7 +551,23 @@ addpath([pwd '/SNMR']);
 % [models] = ModelGenerator(type, N, parameters, nb_layer)
 parameters = get(handles.uitable_prior,'Data');
 parameters = parameters(1:handles.Models.nbLayers,:);
+parameters_tmp = parameters;
 parameters(:,3:4) = parameters(:,3:4)./100;% Changes the values in percentage to dimensionless variables.
+%% Changing the model for custom models here ! (More layers possible)
+% handles.Models.nbLayers = 8;
+% %parameters = [e_min e_max W_min W_max T2_min T2_max; etc];
+% parameters = [2 8 0 5 5 100;...
+%     2 8 10 25 100 300;...
+%     5 15 0 10 50 200;...
+%     5 15 0 5 5 100;...
+%     2 8 10 25 100 300;...
+%     5 15 0 5 5 100;...
+%     10 20 10 25 100 300;...
+%     Inf Inf 0 10 50 200];
+% parameters_tmp = parameters;
+% parameters(:,3:4) = parameters(:,3:4)./100;
+%% End changing the parameter space
+handles.Models.parameters = parameters_tmp;
 handles.Models.model = ModelGenerator(handles.Models.type, handles.Models.N, parameters, handles.Models.nbLayers);
 handles.Status.models = true;
 if handles.Status.kernels && handles.Status.models,
@@ -669,6 +686,7 @@ function pushbutton_Run_Callback(hObject, eventdata, handles)
 % computations. To do so, please, start the parallel pool *BEFORE* clicking
 % on 'Run PFA Imaging' pushbutton.
 %
+tic;
 addpath([pwd '/GlobalFunctions']);
 addpath([pwd '/SNMR']);
 
@@ -681,7 +699,7 @@ if handles.Status.PFA ~= true,% Only possible to run if not previously run
     % uncertainty on the models parameters. However, using already reduced
     % distributions may lead to errors in the posterior distributions,
     % especially if error is present in the data.
-    iterate = true;% true = iterate, false = no iteration
+    iterate = false;%true;% true = iterate, false = no iteration
     if iterate,
         iteration = 3; % Number of iterations
     else, 
@@ -809,7 +827,7 @@ if handles.Status.PFA ~= true,% Only possible to run if not previously run
             while i <= ismulti,
                 if type_mod == 2,% Complex
                     eval(['tmp1 = real(models.results' num2str(i) '); tmp2 = imag(models.results' num2str(i) ');']);
-                    tmp_global = zeros(N, size(tmp1,2)*2,size(tmp1,3));
+                    tmp_global = zeros(handles.Models.N, size(tmp1,2)*2,size(tmp1,3));
                     tmp_global(:,1:end/2,:)=tmp1;
                     tmp_global(:,end/2+1:end,:)=tmp2;
                     eval(['models.results' num2str(i) ' = tmp_global;']);
@@ -841,7 +859,7 @@ if handles.Status.PFA ~= true,% Only possible to run if not previously run
                 tmp1 = real(models.results1);
                 tmp2 = imag(models.results1);
 
-                tmp_global = zeros(N, size(tmp1,2)*2,size(tmp1,3));
+                tmp_global = zeros(handles.Models.N, size(tmp1,2)*2,size(tmp1,3));
                 tmp_global(:,1:end/2,:)=tmp1;
                 tmp_global(:,end/2+1:end,:)=tmp2;
 
@@ -932,7 +950,7 @@ if handles.Status.PFA ~= true,% Only possible to run if not previously run
         warning('off','all');
         [coeff_d,score,~,~,explained_F,~]=pca(Prior_d);
         warning('on','all');
-        nb_PC = max([find(explained_F>level_var,1,'last'),dimh]);% To be sure that there is at least more or equal d than h dim
+        nb_PC = max([find(cumsum(explained_F)<1-level_var,1,'last')+1,dimh]);% To be sure that there is at least more or equal d than h dim
         PCA_d = score(:,1:nb_PC);
         dimd = nb_PC;
 
@@ -1006,7 +1024,9 @@ if handles.Status.PFA ~= true,% Only possible to run if not previously run
         default_bandwidth = 0.01;
         answer = questdlg('Would you like to test the impact of noise?','Noise impact','Yes','No','No');
         if strcmp(answer,'Yes'),
-            [~, error] = testNoise(Prior_d, PCA_d, A, default_bandwidth);
+            answer = inputdlg('Insert the noise level (in nV):');
+            noise_level = str2double(answer)*1e-9;% In V
+            [~, error] = testNoise(Prior_d, PCA_d, A, default_bandwidth,noise_level);
         else
             error = ones(dimh,1).*default_bandwidth;
         end
@@ -1039,7 +1059,7 @@ if handles.Status.PFA ~= true,% Only possible to run if not previously run
             nb_trial = 0;
             i = 0;
             % For the rejection sampler:
-            parameters = get(handles.uitable_prior,'Data');
+            parameters = handles.Models.parameters;%get(handles.uitable_prior,'Data');
             parameters = parameters(1:nb_layer,:);
             parameters(:,3:4) = parameters(:,3:4)./100;
             param_min = parameters(:,1:2:end);
@@ -1066,7 +1086,7 @@ if handles.Status.PFA ~= true,% Only possible to run if not previously run
                 if not(isempty(find(HpostCoeff(i,:)<0, 1))) || not(isempty(find(HpostCoeff(i,:)<Pmin,1))) || not(isempty(find(HpostCoeff(i,:)>Pmax,1))),
                     i = i - 1;
                     nb_trial = nb_trial + 1;
-                    if nb_trial >= 100000,
+                    if nb_trial >= 1000000,
                         warning('Unable to sample correctly! \n \t The data are outside the physical boundaries of the domain!\n');
                         break
                     end
@@ -1086,7 +1106,10 @@ if handles.Status.PFA ~= true,% Only possible to run if not previously run
 
 
             waitbar2a(1,handles.uipanel_waitbar,'Finalizing!');
-
+            
+            % To be reomoved from push
+            save(['D:\OneDrive\OneDrive - doct.uliege.be\05. SNMR\Test_iteration\' 'iterNb' num2str(iteration)],'models');
+            % End: to be removed from push
             passed = 1;
             iteration = iteration - 1;
         else
@@ -1100,6 +1123,7 @@ if handles.Status.PFA ~= true,% Only possible to run if not previously run
     end
     handles.Status.PFA = true;
     guidata(hObject, handles);
+    toc
 end
 
 % GUI adaptation:
@@ -1213,6 +1237,7 @@ function pushbutton_RMS_Callback(hObject, eventdata, handles)
 addpath([pwd '/SNMR']);
 %% 1) Forward modelling:
 models = handles.Solution.model;
+N = length(models.thick(:,1));
 i = 1;
 type_mod = 1;% Absolute value
 while i <= length(find(handles.Data.used.config.OK==true)),
