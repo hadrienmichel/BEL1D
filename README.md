@@ -16,7 +16,7 @@ The different toolboxes that are inside this package are used in [(Michel et al.
 
 ## Installation
 To install the packages, just copy the main directory at the location that pleases you. In order to use the full functionalities of the codes, you **must** have:
-1. [Geopsy](http://www.geopsy.org) installed on your machine and [**added to your PATH**](https://www.howtogeek.com/118594/how-to-edit-your-system-path-for-easy-command-line-access/), to access the gpdc command line tool for the forward modeling of dispersion curves.
+1. A windows version (the MEX code for surface waves is compiled for Windows), or compiling the linux files and change the code to use the correct functions.
 2. [MRSmatlab](https://doi.org/10.1190/geo2015-0461.1
 ) installed in your MATLAB environment (for the computation of sensitivity kernels in SNMR).
 
