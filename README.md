@@ -1,7 +1,7 @@
 # BEL1D
 
 BEL1D is a program for the **stochastic** 1D imaging of the subsurface based on geophysical data.
-It relies on the Bayesian Evidential Learning (BEL) framework called BEL 1D imaging (BEL1D in short) [(Michel et al., Under review) - not yet available](http://www.link_to_the_paper.be). The framework basically consists in 6 steps:
+It relies on the Bayesian Evidential Learning (BEL) framework called BEL 1D imaging (BEL1D in short) [(Michel et al., 2020)](https://doi.org/10.1016/j.cageo.2020.104456). The framework basically consists in 6 steps:
 1. Generation of models from the prior model space and their associated data (forward modeling)
 2. Reduction of the dimensionality of the dataset
 3. Canonical correlation between the data and the models parameters
@@ -9,7 +9,7 @@ It relies on the Bayesian Evidential Learning (BEL) framework called BEL 1D imag
 5. Sampling of models in reduced space
 6. Back-transformation to original space
 
-The different toolboxes that are inside this package are used in [(Michel et al., Under review) - not yet available](http://www.link_to_the_paper.be). They consist in 3 different toolboxes:
+The different toolboxes that are inside this package are used in [(Michel et al., 2020)](https://doi.org/10.1016/j.cageo.2020.104456). They consist in 3 different toolboxes:
 1. Interpretation of SNMR data (BEL1DSNMR)
 2. Interpretation of dispersion curves from surface waves analyses (BEL1DSW)
 3. General case (BEL1DGENERAL)

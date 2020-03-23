@@ -605,7 +605,7 @@ if handles.Status.PFA ~= true,
         ylabel(['m^c_' num2str(jkl)])
         set(gca,'FontSize',16)
     end
-    figure(101);
+    figure;
     nb_layer = handles.Models.nbLayers;
     for i = 1 : (4*nb_layer-1),
        c{i} = ['M^c_' num2str(i)];
